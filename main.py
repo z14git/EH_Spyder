@@ -9,8 +9,6 @@ from Doujinshi import *
 import os
 import time
 from apscheduler.schedulers.blocking import BlockingScheduler
-import win32api
-import psutil
 
 
 def read_download_list():
@@ -25,16 +23,6 @@ def gen_download_list(url):
 
 
 def download():
-    def proc_exist(process_name):
-        pl = psutil.pids()
-        for pid in pl:
-            if psutil.Process(pid).name() == process_name:
-                return True
-        return False
-
-    if not proc_exist('v2rayN.exe'):
-        win32api.ShellExecute(0, 'open', 'C:\\v2ray-windows-64\\v2rayN.exe', '', '', 0)
-        time.sleep(5)
     start = time.time()
     download_list = read_download_list()
     limit = 150 if len(download_list) >= 150 else len(download_list)
@@ -48,8 +36,8 @@ def download():
             print('Error 509 - Reach limit of 5000 pages. %d doujinshi have downloaded.' % (i + 1))
             logger.warning('509 - Reach limit of 5000 pages.')
             sys.exit(0)
-        except:
-            logger.error('Fail download ' + download_list[i].strip('\n'))
+        except Exception as e:
+            logger.error('Fail download ' + download_list[i].strip('\n')+f'\n{e}')
     end = time.time()
     print('Finish download {} doujinshi.'.format(limit) + ' Total time cost: %d minus %d seconds.'
           % ((end - start) // 60, (end - start) % 60))
@@ -67,5 +55,5 @@ def main(scheduled_time=None):
 
 
 if __name__ == '__main__':
-    gen_download_list('https://exhentai.org/?f_cats=264&f_search=parody%3A%22himouto+umaru-chan%24%22+lang%3A%22chinese%22')
-    # main()
+    # gen_download_list('https://exhentai.org/?f_cats=264&f_search=parody%3A%22himouto+umaru-chan%24%22+lang%3A%22chinese%22')
+    main()

@@ -13,6 +13,11 @@ from bs4 import BeautifulSoup
 import threading
 import configparser
 import logging
+import socket
+import socks
+
+socks.set_default_proxy(socks.SOCKS5, "127.0.0.1", 10808)
+socket.socket = socks.socksocket
 
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.82 Safari/537.36',
@@ -44,7 +49,7 @@ class Doujinshi:
         self.headers = ""
         self.max_thread = 15
         self.config_file = configparser.ConfigParser()
-        self.config_file.read(os.path.join(os.path.abspath('.'), 'config.ini'))
+        self.config_file.read(os.path.join(os.path.abspath('.'), 'config.ini'),encoding='utf8')
         self.init_config()
 
     def init_config(self):
